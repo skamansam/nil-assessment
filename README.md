@@ -9,6 +9,8 @@ Each book has a title and an author.
 You should protect your library; only authenticated users should be allowed to modify information, but anyone can look at
 what books are in your library.
 
+Please submit your result via a link to a github repository containing your code.
+
 ## Details
 * You don't need to actually use a real databse, memory is fine.  Make sure it'd be easy to modify in the future to hook it up to a database, though.
 * For the purpose of this evaluation, putting user credential information in the code itself is fine.
