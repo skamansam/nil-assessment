@@ -2,6 +2,9 @@
 
 const https = require('https');
 const fs = require('fs');
+const querystring = require('querystring')
+
+const Router = require('./Router')
 
 class Server {
   constructor(port){
@@ -16,6 +19,7 @@ class Server {
       cert: this.serverCert
     }, this.handleRequest).listen(this.port);
     this.server.on('error', (err) => console.error(err));
+
   }
 
   stop() {
@@ -25,8 +29,17 @@ class Server {
   handleRequest(request, response) {
     response.setHeader('Content-Type', 'application/json')
     // response.writeHead(200);
-    response.end('It Works!');
-    console.info('IT WORKS!')
+    console.log(request.url)
+    let content = ''
+    request.on('data', (data) => {
+      content += data
+    })
+    request.on('end', () => {
+      const body = querystring.parse(content)
+      console.info(body)
+      response.end(new Router(request, response, body).render());
+      console.info('IT WORKS!')
+    })
   }
   
 }
