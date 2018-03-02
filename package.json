@@ -1,0 +1,22 @@
+{
+  "name": "nil-assessment",
+  "version": "1.0.0",
+  "description": "assessment for programming skills",
+  "main": "index.js",
+  "scripts": {
+    "test": "index.test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/skamansam/nil-assessment.git"
+  },
+  "keywords": [
+    "test"
+  ],
+  "author": "Samuel C Tyler",
+  "license": "Unlicense",
+  "bugs": {
+    "url": "https://github.com/skamansam/nil-assessment/issues"
+  },
+  "homepage": "https://github.com/skamansam/nil-assessment#readme"
+}
