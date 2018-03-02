@@ -1,5 +1,6 @@
 'use strict';
-const DataModel = require('./JSONDataModel')
+const querystring = require('querystring')
+const JSONDataModel = require('./JSONDataModel')
 
 const BookData = [
   {
@@ -9,9 +10,13 @@ const BookData = [
   },{},{}
 ]
 
-class Book extends DataModel {
+class Book extends JSONDataModel {
   constructor(){
     super()
+    this.data = BookData
+  }
+  render(){
+    return querystring.stringify({error: 'not implemented'})
   }
 }
 

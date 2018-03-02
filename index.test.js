@@ -16,26 +16,29 @@ let apiTestCount = 0;
  * so you should just pass the `path`, `method`, and `body` properties for them.
  * @param {String} title the name of the test 
  * @param {Object} serverOptions options for the https request() method
- * @param {Function} cb the callback to run when the server has responded
+ * @param {Function} testCallback the callback to run when the server has responded
  */
-function testAPI(title, serverOptions, cb){
-  const defaultOptions = {
-    hostname: 'localhost',
-    port: 3000,
-    path: '/',
-    method: 'GET',
-    rejectUnauthorized: false
+function testAPI(title, serverOptions, testCallback){
+  let defaultOptions = {
+    'hostname': 'localhost',
+    'port': 3000,
+    'path': '/',
+    'method': 'GET',
+    'rejectUnauthorized': false,
+    'headers': {
+      'Authorization': 'Basic ' + new Buffer('sam:test123', 'utf8').toString('base64')
+    }
   };
   apiTestCount += 1
   const agentOptions = Object.assign({}, defaultOptions, serverOptions)
   serverOptions.agent = new https.Agent(agentOptions);
   serverOptions.port = 3000
 
-  const req = https.request(serverOptions, (response) => {
+  const req = https.request(agentOptions, (response) => {
     
     response.on('data', (body) => {
       console.info(title)
-      cb(response.statusCode, response.headers, body)
+      testCallback(response.statusCode, response.headers, body)
       process.stdout.write(body);
       apiTestCount -= 1
       if(apiTestCount < 1){

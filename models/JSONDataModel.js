@@ -1,7 +1,7 @@
 'use strict';
 
 class JSONDataModel {
-  constructor(props){
+  constructor(){
     this.data = {}
   }
 
@@ -14,6 +14,11 @@ class JSONDataModel {
       return item.id === id
     })
   }
+
+  render(){
+    return querystring.stringify({error: 'not implemented'})
+  }
+
 }
 
 module.exports = JSONDataModel;
