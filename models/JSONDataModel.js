@@ -1,16 +1,16 @@
 'use strict';
 
 class JSONDataModel {
-  constructor(){
-    this.data = {}
+  static all(){
+    return this._data();
   }
 
-  static all(){
-    return this.data;
+  static data(){
+    return {}
   }
   
   static find_by_id(id){
-    this.data.find( item => {
+    this._data().find( item => {
       return item.id === id
     })
   }

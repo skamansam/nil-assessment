@@ -15,16 +15,16 @@ class Router {
     this.parseUrl()
     const actionMethod = this.determineActionMethod()
     const objectClass = this.determineObjectClass()
-    if(!Auth.is_authorized(this.authInfo, this.objectClassName, actionMethod)){
+    if(!Auth.authorize(this.authInfo, this.objectClassName, actionMethod)){
       response.setHeader('WWW-Authenticate', 'Basic realm="Secure Area"')
       this.response.statusCode = 401
       this.response.statusMessage = 'user not authorized'
       return 'not authorized'
     }
     try {
-      return this.determineObjectClass().call(determineActionMethod(), this.params, this.extraPathInfo)
+      return eval(`(new ${objectClass}).${actionMethod}(actionMethod, this.params, this.extraPathInfo)`)
     } catch (e) {
-      console.error(e)
+      console.error(e, e.stack)
       return e
     }
   }

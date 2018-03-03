@@ -15,6 +15,10 @@ class Book extends JSONDataModel {
     super()
     this.data = BookData
   }
+  static _data(){
+    return BookData
+  }
+
   render(){
     return querystring.stringify({error: 'not implemented'})
   }
