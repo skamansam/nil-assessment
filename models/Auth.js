@@ -1,5 +1,5 @@
-const User = require('./User');
-
+const User = require('./User')
+const Buffer = require('buffer').Buffer
 const Roles = {
   'admin': {
     'books': ['create', 'read', 'update', 'createOrUpdate', 'destroy'],
@@ -18,9 +18,9 @@ const Roles = {
 class Auth {
   constructor(authInfo, object, action){
     [this.authInfo, this.object, this.action ] = [authInfo, object, action]
-    this.login = null;
-    this.password = null;
-    this.user = null;
+    this.login = null
+    this.password = null
+    this.user = null
   }
 
   static authorize(authInfo, object, action){
@@ -45,7 +45,7 @@ class Auth {
     })
   }
 
-  is_authentic(user_data){
+  is_authentic(){
     if (this.user){
       return this.user.has_password(this.password)
     }
