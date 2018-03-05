@@ -1,17 +1,13 @@
 'use strict'
 const querystring = require('querystring')
 
-class JSONDataModel {
-  constructor(){
-    this.dynamicData = []
+class JSONDataModel { 
+  constructor(seedData){
+    this.data = seedData
   }
 
   static all(){
     return this._data()
-  }
-
-  static _data(){
-    return this.dynamicData + []
   }
   
   static find_by_id(id){
@@ -20,9 +16,11 @@ class JSONDataModel {
     })
   }
 
-  create(data){
-    data.id = this._data()[-1].id
-    this.dynamicData.push(data)
+  create(user, data, params, pathInfo){
+    const new_data = data
+    new_data.id = this._data()[-1].id + 1
+    this.data.push(data)
+    return this.render(data)
   }
 
   createOrUpdate(objData){
@@ -32,7 +30,7 @@ class JSONDataModel {
     } else {
       this.create(objData)
     }
-    this.dynamicData.push(objData)
+    this.data.push(objData)
 
     // throw new Error('cannot create or update data for JSONDataModel')
   }
@@ -53,8 +51,8 @@ class JSONDataModel {
     return this.render()
   }
 
-  render(){
-    return querystring.stringify({error: 'not implemented'})
+  render(obj){
+    return JSON.stringify(obj)
   }
 
 }

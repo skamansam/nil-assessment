@@ -17,6 +17,7 @@ let apiTestCount = 0
  *  a simple https API test runner. include a body field to the serverOptions
  *  argument to send data. We have sensible defaults for the server options,
  * so you should just pass the `path`, `method`, and `body` properties for them.
+ * NOTE: The problem with using this to verify data is that the requests are not in sync. 
  * In the real world, we would use mocha/chai instead. Maybe use Postman or API
  * Blueprint for tests instead.
  * @param {String} title the name of the test 
@@ -43,20 +44,24 @@ function testAPI(title, serverOptions, testCallback){
     
     response.on('data', (body) => {
       console.info(title)
-      testCallback(response.statusCode, response.headers, body)
-      process.stdout.write(body)
+      testCallback(response.statusCode, response.headers, JSON.parse(body.toString()))
+      // process.stdout.write(body)
       apiTestCount -= 1
       if(apiTestCount < 1){
         server.stop()
       }
     })
   }).on('error', (e) => {
+    apiTestCount -= 1
+    if (apiTestCount < 1) {
+      server.stop()
+    }
     console.error('FAILED')
     console.error(e)
   })
 
   if(serverOptions.body) {
-    const content = querystring.stringify(serverOptions.body)
+    const content = JSON.stringify(serverOptions.body)
     req.write(content)
   }
 
@@ -66,26 +71,140 @@ function testAPI(title, serverOptions, testCallback){
 console.info('Running Tests...')
 
 testAPI(
+  'should return 401 if user is not recognized for a restricted action',
+  {
+    path: '/books.json',
+    method: 'POST',
+    body: {
+      title: 'First Book',
+      author: 'First Author',
+      created_by: 1
+    },
+    headers: {
+      Authorization: 'Basic ' + new Buffer('unknown:unknown', 'utf8').toString('base64')
+    }
+  },
+  (statusCode, headers, body) => {
+    console.assert(statusCode === 401)
+    console.assert(body.error === 'not authorized')
+  }
+)
+
+testAPI(
+  'should return OK if user is not recognized for an unrestricted action',
+  {
+    path: '/books.json',
+    method: 'GET',
+    body: {
+      title: 'First Book',
+      author: 'First Author',
+      created_by: 1
+    },
+    headers: {
+      Authorization: 'Basic ' + new Buffer('unknown:unknown', 'utf8').toString('base64')
+    }
+  },
+  (statusCode, headers, body) => {
+    console.assert(statusCode === 200)
+    console.assert(body[0].title == 'First Book')
+  }
+)
+
+
+testAPI(
   'Books POST should create a book',
   {
-    path: '/books',
+    path: '/books.json',
     method: 'POST',
-    body: {msg: 'hello'}
+    body: {
+      title: 'First Book',
+      author: 'First Author',
+      created_by: 1
+    }
   },
-  (headers, body) => {
-    console.log(body)
+  (statusCode, headers, body) => {
+    console.assert(statusCode === 201)
+    console.assert(body.id)
+    console.assert(body.title === 'First Book')
+    console.assert(body.author === 'First Author')
   }
 )
 
 testAPI(
   'Books GET should list all books',
   {
-    path: '/books',
-    method: 'GET',
-    body: 'help!'
+    path: '/books.json',
+    method: 'GET'
   },
-  (headers, body) => {
-    console.assert(headers)
+  (statusCode, headers, body) => {
+
+  }
+)
+
+testAPI(
+  'Books GET with id should list all books',
+  {
+    path: '/books/1.json',
+    method: 'GET'
+  },
+  (statusCode, headers, body) => {
+  }
+)
+
+
+testAPI(
+  'Books POST should create another book (create step)',
+  {
+    path: '/books.json',
+    method: 'POST',
+    body: {
+      title: 'Second Book',
+      author: 'Second Author',
+      created_by: 1
+    }
+  },
+  (statusCode, headers, body) => {
+    console.assert(statusCode === 201)
+    console.assert(body.id)
+    console.assert(body.title === 'Second Book')
+  }
+)
+
+testAPI(
+  'Books POST should create another book (read step)',
+  {
+    path: '/books.json',
+    method: 'GET'
+  },
+  (statusCode, headers, body) => {
+    testAPI(
+      'Books POST should create a book (write step)',
+      {
+        path: '/books.json',
+        method: 'POST',
+        body: {
+          title: 'New Book X',
+          author: 'X Author',
+          created_by: 1
+        }
+      },
+      (statusCode, headers, body) => {
+      }
+    )
+    console.assert(statusCode === 200)
+    console.assert(body.id)
+    console.assert(body.title === 'Second Book')
+  }
+)
+
+testAPI(
+  'Books GET should list all books',
+  {
+    path: '/books.json',
+    method: 'GET'
+  },
+  (statusCode, headers, body) => {
+    // console.assert(headers)
   }
 )
 
@@ -93,20 +212,20 @@ testAPI(
 testAPI(
   'Books PATCH should update a book',
   {
-    path: '/books',
+    path: '/books/1.json',
     method: 'PATCH'
   },
-  (headers, body) => {
+  (statusCode, headers, body) => {
 
   }
 )
 testAPI(
-  'Books DELETE should create a book',
+  'Books DELETE should delete a book',
   {
-    path: '/books',
+    path: '/books/1.json',
     method: 'DELETE'
   },
-  (headers, body) => {
+  (statusCode, headers, body) => {
 
   }
 )

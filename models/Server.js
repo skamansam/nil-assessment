@@ -37,10 +37,9 @@ class Server {
       content += data
     })
     request.on('end', () => {
-      const body = querystring.parse(content)
-      console.info(body)
-      response.end(new Router(request, response, body).render())
-      console.info('IT WORKS!')
+      //const body = querystring.parse(content)
+      console.info(content)
+      response.end(new Router(request, response, content).render())
     })
   }
   

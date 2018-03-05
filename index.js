@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 const ServerClass = require('./models/Server')
 
 const server = new ServerClass(3000)

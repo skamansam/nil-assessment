@@ -23,26 +23,47 @@ class Auth {
     this.user = null
   }
 
+/**
+ * Authorize and authenticate user for actions on an object.
+ * If a user attempts to authenticate as an unknown user, a guest user is used. 
+ * Question: Should we disallow authentication instead?
+ * 
+ * @param {String} authInfo the info we want use to auth. onyl Basic auth string supported 
+ * @param {String} object 
+ * @param {String} action 
+ */
   static authorize(authInfo, object, action){
     const auth = new Auth(authInfo, object, action)
     auth.parseAuthInfo()
-    return auth.is_authentic() && auth.is_authorized()
+    if(auth.is_authentic() && auth.is_authorized()){
+      return auth.user
+    }
   }
 
   parseAuthInfo(){
-    const authCode = this.authInfo.split(' ')[1]
-    const authDecode = new Buffer(authCode, 'base64').toString()
-    const creds = authDecode.split(':')
-    this.login = creds[0]
-    this.password = creds[1]
-    this.user = User.find_by_login(creds[0])
+    if(this.authInfo){
+      const authCode = this.authInfo.split(/\s+/)[1]
+      const authDecode = new Buffer(authCode, 'base64').toString()
+      const creds = authDecode.split(':')
+      this.login = creds[0]
+      this.password = creds[1]
+      this.user = User.find_by_login(this.login)
+    }
+    if(!this.user){
+      this.login = 'guest'
+      this.password = ''
+      this.user = User.find_by_login('guest')
+    } 
+    console.info(`authenticated as ${this.user.name}`)
   }
 
   is_authorized(){
     const validActions = Roles[this.user.role][this.object]
-    return validActions.find(action => {
+    const validatedAction = validActions.find(action => {
       return action === this.action
     })
+    console.info(`${this.user.name} ${validatedAction ? 'is' : 'is not'} authorized to ${this.action} ${this.object}`)
+    return validatedAction
   }
 
   is_authentic(){

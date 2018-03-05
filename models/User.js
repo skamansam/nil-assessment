@@ -2,6 +2,13 @@ const JSONDataModel = require('./JSONDataModel')
 
 const UserData = [
   {
+    id: 0,
+    name: 'Guest User',
+    role: 'guest',
+    password: '',
+    login: 'guest'
+  },
+  {
     id: 1,
     name: 'Sammy T',
     role: 'admin',
