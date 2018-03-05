@@ -24,17 +24,17 @@ let UserData = [
   }
 ]
 
-class User extends JSONDataModel {
+class User {
   constructor(userData){
     super()
     Object.assign(this, userData)
   }
 
   static find_by_login(login){
-    const user_data = UserData.find(user => {
+    const user = UserData.find(user => {
       return user.login === login
     })
-    return new User(user_data)
+    return new User(user)
   }
   
   has_password(pwd){
