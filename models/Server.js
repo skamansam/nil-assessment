@@ -37,8 +37,6 @@ class Server {
       content += data
     })
     request.on('end', () => {
-      //const body = querystring.parse(content)
-      console.info(content)
       response.end(new Router(request, response, content).render())
     })
   }

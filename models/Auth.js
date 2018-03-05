@@ -53,16 +53,21 @@ class Auth {
       this.login = 'guest'
       this.password = ''
       this.user = User.find_by_login('guest')
-    } 
-    console.info(`authenticated as ${this.user.name}`)
+    }
+    // TODO: maintain log of user and actions
+    // console.info(`authenticated as ${this.user.name}`)
   }
 
+  /**
+   * determine whether a user is authorized for the requested action
+   */
   is_authorized(){
     const validActions = Roles[this.user.role][this.object]
     const validatedAction = validActions.find(action => {
       return action === this.action
     })
-    console.info(`${this.user.name} ${validatedAction ? 'is' : 'is not'} authorized to ${this.action} ${this.object}`)
+    // TODO: maintain log of user and actions
+    // console.info(`${this.user.name} ${validatedAction ? 'is' : 'is not'} authorized to ${this.action} ${this.object}`)
     return validatedAction
   }
 
