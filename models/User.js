@@ -1,4 +1,3 @@
-const JSONDataModel = require('./JSONDataModel')
 
 let UserData = [
   {
@@ -26,7 +25,6 @@ let UserData = [
 
 class User {
   constructor(userData){
-    super()
     Object.assign(this, userData)
   }
 

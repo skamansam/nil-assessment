@@ -1,5 +1,4 @@
 'use strict'
-const JSONDataModel = require('./JSONDataModel')
 
 let BookData = [
   {
@@ -9,9 +8,14 @@ let BookData = [
   }
 ]
 
+/**
+ * Holds data for author and title for a collection of books. Uses an array for storage, so it will reset each time the 
+ * app is restarted. There was a base class, kind of like an ORM in an earlier iteration of this assignemtn, but 
+ * it has been removed. You can look through the commit history for removal.
+ */
 class Book {
   constructor(data){
-    super(BookData)
+    Object.assign(this, data)
   }
 
   static find_by_id(id) {
