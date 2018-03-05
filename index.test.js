@@ -1,9 +1,6 @@
 /* eslint-disable no-console */
 const https = require('https')
-const querystring = require('querystring')
 const Buffer = require('buffer').Buffer
-const process = require('process')
-const child_process = require('child_process')
 
 // start the server for testing
 const ServerClass = require('./models/Server')
@@ -18,6 +15,7 @@ let apiTestCount = 0
  *  a simple https API test runner. include a body field to the serverOptions
  *  argument to send data. We have sensible defaults for the server options,
  * so you should just pass the `path`, `method`, and `body` properties for them.
+ * NOTE: this is used for development only. happy-path. actual results were tested using curl
  * NOTE: The problem with using this to verify data is that the requests are not in sync. 
  * In the real world, we would use mocha/chai instead. Maybe use Postman or API
  * Blueprint for tests instead.
@@ -165,6 +163,7 @@ testAPI(
     // TODO: verify change in another call, using curl
   }
 )
+// TODO: this delete could fubar the rest of the tests. intermittent failure
 testAPI(
   'Books DELETE should delete a book',
   {
