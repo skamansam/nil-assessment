@@ -1,6 +1,6 @@
 const JSONDataModel = require('./JSONDataModel')
 
-const UserData = [
+let UserData = [
   {
     id: 0,
     name: 'Guest User',
@@ -25,21 +25,13 @@ const UserData = [
 ]
 
 class User extends JSONDataModel {
-  constructor(user_data){
+  constructor(userData){
     super()
-    Object.assign(this, user_data)
-    // this.id = user_data.id
-    // this.login = user_data.login
-    // this.name = user_data.name
-    // this.role = user_data.role
-  }
-
-  static _data(){
-    return UserData
+    Object.assign(this, userData)
   }
 
   static find_by_login(login){
-    const user_data = this._data().find(user => {
+    const user_data = UserData.find(user => {
       return user.login === login
     })
     return new User(user_data)
