@@ -45,7 +45,6 @@ function testAPI(title, serverOptions, testCallback){
     response.on('data', (body) => {
       console.info(title)
       testCallback(response.statusCode, response.headers, JSON.parse(body.toString()))
-      // process.stdout.write(body)
       apiTestCount -= 1
       if(apiTestCount < 1){
         server.stop()
@@ -56,6 +55,7 @@ function testAPI(title, serverOptions, testCallback){
     if (apiTestCount < 1) {
       server.stop()
     }
+    console.info(title)
     console.error('FAILED')
     console.error(e)
   })
@@ -91,17 +91,11 @@ testAPI(
 )
 
 testAPI(
-  'should return OK if user is not recognized for an unrestricted action',
+  'should return OK if no user is given for an unrestricted action',
   {
     path: '/books.json',
     method: 'GET',
-    body: {
-      title: 'First Book',
-      author: 'First Author',
-      created_by: 1
-    },
     headers: {
-      Authorization: 'Basic ' + new Buffer('unknown:unknown', 'utf8').toString('base64')
     }
   },
   (statusCode, headers, body) => {
@@ -137,12 +131,13 @@ testAPI(
     method: 'GET'
   },
   (statusCode, headers, body) => {
-
+    console.assert(Array.isArray(body))
+    console.assert(body.length >= 1)
   }
 )
 
 testAPI(
-  'Books GET with id should list all books',
+  'Books GET with id should give the correct book',
   {
     path: '/books/1.json',
     method: 'GET'
