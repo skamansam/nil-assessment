@@ -3,6 +3,7 @@ const https = require('https')
 const querystring = require('querystring')
 const Buffer = require('buffer').Buffer
 const process = require('process')
+const child_process = require('child_process')
 
 // start the server for testing
 const ServerClass = require('./models/Server')
@@ -143,75 +144,25 @@ testAPI(
     method: 'GET'
   },
   (statusCode, headers, body) => {
-  }
-)
-
-
-testAPI(
-  'Books POST should create another book (create step)',
-  {
-    path: '/books.json',
-    method: 'POST',
-    body: {
-      title: 'Second Book',
-      author: 'Second Author',
-      created_by: 1
-    }
-  },
-  (statusCode, headers, body) => {
-    console.assert(statusCode === 201)
-    console.assert(body.id)
-    console.assert(body.title === 'Second Book')
-  }
-)
-
-testAPI(
-  'Books POST should create another book (read step)',
-  {
-    path: '/books.json',
-    method: 'GET'
-  },
-  (statusCode, headers, body) => {
-    testAPI(
-      'Books POST should create a book (write step)',
-      {
-        path: '/books.json',
-        method: 'POST',
-        body: {
-          title: 'New Book X',
-          author: 'X Author',
-          created_by: 1
-        }
-      },
-      (statusCode, headers, body) => {
-      }
-    )
     console.assert(statusCode === 200)
-    console.assert(body.id)
-    console.assert(body.title === 'Second Book')
+    console.assert(body.id === 1)
   }
 )
-
-testAPI(
-  'Books GET should list all books',
-  {
-    path: '/books.json',
-    method: 'GET'
-  },
-  (statusCode, headers, body) => {
-    // console.assert(headers)
-  }
-)
-
 
 testAPI(
   'Books PATCH should update a book',
   {
     path: '/books/1.json',
-    method: 'PATCH'
+    method: 'PATCH',
+    body: {
+      title: 'new_title'
+    }
   },
   (statusCode, headers, body) => {
-
+    console.assert(statusCode === 200)
+    console.assert(body.id === 1)
+    console.assert(body.title === 'new_title')
+    // TODO: verify change in another call, using curl
   }
 )
 testAPI(
@@ -221,6 +172,8 @@ testAPI(
     method: 'DELETE'
   },
   (statusCode, headers, body) => {
-
+    console.assert(statusCode === 200)
+    console.assert(body.id === 1)
+    // TODO: verify the item doesn't exist
   }
 )
